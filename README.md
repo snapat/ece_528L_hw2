@@ -43,8 +43,25 @@ Current Value register contains the current value of the counter.
 10. There are 7 modules available. Each output mode has 8 operating modes,and each capture/compare block has it's own output.
 
 11.
+#define OUTMOD_BITS 5
+#define PERIOD_CONSTANT 60000
 
-void Timer_A0_PWM_Init (uint16_t period_constant, uint16_t duty_cycle_1, uint16_t duty_cycle 2) 
+void Timer_A0_PWM_Init () 
 {
-  
+  P2->SEL0 |= 0x10;
+  P2->SEL1 &= ~(0x10); //Set to secondary mode
+
+  P2->DIR |= 0x10; //Configured to output
+
+  TIMER_A0->CCR[1] = PERIOD_CONSTANT; // set Period = (2*60000) / (12 MHz / 2) = 20 ms
+
+  TIMER_A0->EX0 = 0b00; //clear all bits of expnasion register
+
+  TIMER_A0->CCTL[1] |= (0b010 << OUTMOD_BITS); // toggle/reset mode
+
+  TIMER_A0 -> CTL |= 0x0270; //settings
+
+  TIMER_A0 -> CCR[1] = PERIOD_CONSTANT/2; //change duty cycle
+
+
 }
